@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test ToneFixer Extension</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        line-height: 1.6;
+      }
+
+      .test-section {
+        background: #f5f5f5;
+        padding: 20px;
+        margin: 20px 0;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+
+      textarea,
+      input[type="text"] {
+        width: 100%;
+        min-height: 100px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        margin: 10px 0;
+      }
+
+      input[type="text"] {
+        min-height: 40px;
+      }
+
+      .demo-text {
+        color: #666;
+        font-style: italic;
+        font-size: 12px;
+      }
+
+      h1 {
+        color: #333;
+        text-align: center;
+      }
+
+      h2 {
+        color: #555;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+      }
+
+      .instructions {
+        background: #e3f2fd;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+
+      .status {
+        background: #fff3cd;
+        padding: 10px;
+        border-radius: 4px;
+        margin: 10px 0;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>🎯 Page de Test ToneFixer</h1>
+
+    <div class="instructions">
+      <h3>📋 Instructions :</h3>
+      <ol>
+        <li>Assurez-vous que l'extension ToneFixer est installée et activée</li>
+        <li>Tapez du texte dans les zones ci-dessous</li>
+        <li>Le widget ToneFixer devrait apparaître automatiquement</li>
+        <li>Cliquez sur le widget pour obtenir une analyse de ton</li>
+      </ol>
+    </div>
+
+    <div class="status">
+      ✅ Extension détectée : <span id="extension-status">Vérification...</span>
+    </div>
+
+    <div class="test-section">
+      <h2>📧 Test Zone Email</h2>
+      <textarea
+        placeholder="Tapez votre message ici pour simuler un email...
+        
+Exemples à tester :
+- 'Hey, j'ai besoin de ça MAINTENANT!'
+- 'Pouvez-vous s'il vous plaît m'aider avec ce projet?'
+- 'C'est vraiment frustrant, ça ne marche pas du tout!'"
+      ></textarea>
+      <div class="demo-text">Simule : Gmail, Outlook</div>
+    </div>
+
+    <div class="test-section">
+      <h2>💬 Test Zone Chat</h2>
+      <input type="text" placeholder="Message de chat rapide..." />
+      <div class="demo-text">Simule : Slack, Discord, Teams</div>
+    </div>
+
+    <div class="test-section">
+      <h2>📝 Test Zone Comment</h2>
+      <textarea
+        placeholder="Rédigez un commentaire...
+        
+Essayez des tons différents :
+- Professionnel et poli
+- Trop direct ou agressif
+- Enthousiaste et positif"
+      ></textarea>
+      <div class="demo-text">Simule : LinkedIn, GitHub</div>
+    </div>
+
+    <div class="test-section">
+      <h2>🔧 Debug Information</h2>
+      <div id="debug-info">
+        <p><strong>URL actuelle :</strong> <span id="current-url"></span></p>
+        <p>
+          <strong>Plateforme détectée :</strong>
+          <span id="detected-platform"></span>
+        </p>
+        <p>
+          <strong>Extension active :</strong>
+          <span id="extension-active"></span>
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // Informations de debug
+      document.getElementById("current-url").textContent = window.location.href; // Vérifier si l'extension est présente - version améliorée
+      function checkExtension() {
+        // Méthode 1: Vérifier l'attribut DOM
+        const hasAttribute = document.documentElement.hasAttribute(
+          "data-tonefixer-extension"
+        );
+
+        // Méthode 2: Vérifier localStorage
+        let hasLocalStorage = false;
+        try {
+          hasLocalStorage =
+            localStorage.getItem("tonefixer-extension-loaded") === "true";
+        } catch (e) {
+          console.log("Impossible de lire localStorage");
+        }
+
+        // Méthode 3: Vérifier la propriété globale
+        const hasGlobal =
+          window.ToneFixerExtension && window.ToneFixerExtension.loaded;
+
+        // Méthode 4: Vérifier les scripts injectés
+        const hasContentScript = Array.from(document.scripts).some(
+          (script) => script.src && script.src.includes("content.js")
+        );
+
+        console.log("ToneFixer Detection:", {
+          hasAttribute,
+          hasLocalStorage,
+          hasGlobal,
+          hasContentScript,
+        });
+
+        const isDetected =
+          hasAttribute || hasLocalStorage || hasGlobal || hasContentScript;
+
+        document.getElementById("extension-status").textContent = isDetected
+          ? "Installée ✅"
+          : "Non détectée ❌";
+
+        // Afficher plus de détails
+        if (isDetected) {
+          document.getElementById("extension-status").textContent += ` (${[
+            hasAttribute && "DOM",
+            hasLocalStorage && "Storage",
+            hasGlobal && "Global",
+            hasContentScript && "Script",
+          ]
+            .filter(Boolean)
+            .join(", ")})`;
+        }
+
+        return isDetected;
+      }
+
+      // Vérifier immédiatement et dans 2 secondes
+      setTimeout(checkExtension, 100);
+      setTimeout(checkExtension, 2000);
+
+      // Vérifier périodiquement pendant 10 secondes
+      let attempts = 0;
+      const checkInterval = setInterval(() => {
+        if (checkExtension() || attempts++ > 20) {
+          clearInterval(checkInterval);
+        }
+      }, 500);
+
+      // Simulation de détection de plateforme
+      document.getElementById("detected-platform").textContent =
+        "test-page (debug mode)";
+      document.getElementById("extension-active").textContent =
+        "Mode debug activé";
+
+      // Ajouter des événements pour déclencher le widget
+      document
+        .querySelectorAll('textarea, input[type="text"]')
+        .forEach((element) => {
+          element.addEventListener("focus", () => {
+            console.log("ToneFixer Test: Input focused", element);
+          });
+
+          element.addEventListener("input", () => {
+            console.log(
+              "ToneFixer Test: Text input detected",
+              element.value.length + " characters"
+            );
+          });
+        });
+
+      // Message de debug pour l'extension
+      console.log("ToneFixer Test Page: Ready for testing");
+      console.log("ToneFixer Test Page: URL =", window.location.href);
+    </script>
+  </body>
+</html>

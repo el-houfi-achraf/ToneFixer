@@ -1,0 +1,73 @@
+{  "manifest_version": 3,
+  "name": "ToneFixer - Amélioration de Ton IA",
+  "version": "1.0.0",
+  "description": "Analysez et améliorez automatiquement le ton de vos messages en temps réel avec l'IA sur toutes les plateformes web",
+  "permissions": ["storage", "activeTab", "scripting", "notifications"],
+  "host_permissions": [
+    "https://mail.google.com/*",
+    "https://slack.com/*",
+    "https://app.slack.com/*",
+    "https://linkedin.com/*",
+    "https://www.linkedin.com/*",
+    "https://github.com/*",
+    "https://discord.com/*",
+    "https://teams.microsoft.com/*",
+    "https://*.teams.microsoft.com/*",
+    "https://google.com/*",
+    "https://*.google.com/*",
+    "https://outlook.com/*",
+    "https://*.outlook.com/*",
+    "http://localhost/*",
+    "https://example.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://mail.google.com/*",
+        "https://slack.com/*",
+        "https://app.slack.com/*",
+        "https://linkedin.com/*",
+        "https://www.linkedin.com/*",
+        "https://github.com/*",
+        "https://discord.com/*",
+        "https://teams.microsoft.com/*",
+        "https://*.teams.microsoft.com/*",
+        "https://google.com/*",
+        "https://*.google.com/*",
+        "https://outlook.com/*",
+        "https://*.outlook.com/*",
+        "http://localhost/*",
+        "https://example.com/*",
+        "file://*/*"
+      ],
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "ToneFixer - Amélioration de Ton",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["widget.html", "widget.css", "widget.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
